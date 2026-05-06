@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ── Backgrounds ── */
+  --bg:            #0a0808;
+  --bg-raised:     #100d0d;
+  --bg-card:       #161111;
+  --bg-hover:      #1c1616;
+  --bg-border:     rgba(255,255,255,0.06);
+  --bg-bordermid:  rgba(255,255,255,0.10);
+
+  /* ── Primary — Burnt Orange-Red ── */
+  --brand:         #d55124;
+  --brand-light:   #e8714a;
+  --brand-bright:  #f5a585;
+  --brand-dark:    #a33d19;
+  --brand-muted:   rgba(213,81,36,0.12);
+  --brand-border:  rgba(213,81,36,0.22);
+  --brand-glow:    rgba(213,81,36,0.28);
+
+  /* ── White accents ── */
+  --white:         #ffffff;
+  --white-dim:     rgba(255,255,255,0.80);
+  --white-muted:   rgba(255,255,255,0.12);
+  --white-border:  rgba(255,255,255,0.15);
+
+  /* ── Warm neutrals ── */
+  --warm:          #c97a5a;
+  --warm-muted:    rgba(201,122,90,0.12);
+
+  /* ── Text (IMPROVED for readability) ── */
+  --snow:          #f5f1ed;
+  --snow-dim:      #d4ccc6;
+  --snow-muted:    #9d9289;
+
+  /* ── Gradients ── */
+  --brand-grad:    linear-gradient(135deg, #a33d19 0%, #d55124 50%, #e8714a 100%);
+  --brand-grad-h:  linear-gradient(90deg, #a33d19 0%, #d55124 100%);
+  --brand-grad-w:  linear-gradient(135deg, #d55124 0%, #ffffff 100%);
+
+  /* ── Fonts ── */
+  --font-display:  'Bricolage Grotesque', sans-serif;
+  --font-body:     'Inter', system-ui, sans-serif;
+  --font-mono:     'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--snow);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a      { color: inherit; text-decoration: none; }
+img    { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: var(--font-body); }
+ul     { list-style: none; }
+
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--brand-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand); }
+
+::selection { background: var(--brand-muted); color: var(--brand-bright); }
+
+/* ── Keyframes ── */
+@keyframes shimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position:  300% center; }
+}
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseB {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0.4; }
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 20px var(--brand-glow); }
+  50%     { box-shadow: 0 0 40px var(--brand-glow), 0 0 60px rgba(213,81,36,0.15); }
+}
+
+/* ── Utilities ── */
+.text-brand-grad {
+  background: var(--brand-grad);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+.text-brand-white-grad {
+  background: var(--brand-grad-w);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.animate-ticker  { animation: ticker 26s linear infinite; }
+.animate-pulse-b { animation: pulseB 2s ease-in-out infinite; }
+.animate-glow    { animation: glowPulse 3s ease-in-out infinite; }
+
+.container  { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.section-py { padding-top: 5.5rem; padding-bottom: 5.5rem; }
