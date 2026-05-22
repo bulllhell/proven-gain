@@ -1,266 +1,561 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { TbCheck, TbCalendar, TbArrowRight, TbPhone, TbMail } from 'react-icons/tb'
+import {
+  RiCalendarLine,
+  RiCheckboxCircleFill,
+  RiArrowRightUpLine,
+  RiUserLine,
+  RiMailLine,
+  RiPhoneLine,
+  RiStore2Line,
+  RiMessage2Line,
+  RiInstagramLine,
+  RiWhatsappLine,
+  RiTimeLine,
+  RiShieldCheckLine,
+  RiStarFill,
+  RiCloseLine,
+} from 'react-icons/ri'
+import { SiShopify } from 'react-icons/si'
 
-const up = (d = 0) => ({
-  hidden: { opacity: 0, y: 22 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.65, delay: d, ease: [0.22, 1, 0.36, 1] } },
-})
-
-const STEPS = [
-  { n: '01', title: 'Book Your Slot',   desc: 'Pick a time — takes under 60 seconds.' },
-  { n: '02', title: 'Strategy Session', desc: 'We audit your situation and map a fully custom plan.' },
-  { n: '03', title: 'We Get to Work',   desc: 'Choose your package and we start immediately.' },
-  { n: '04', title: 'Watch It Scale',   desc: 'Launch, grow, and hit your revenue goals.' },
+// ── Data ──────────────────────────────────────────────────────
+const services = [
+  'Shopify Store Setup',
+  'Brand Identity & Logo',
+  'Growth Funnels',
+  'Social Media Marketing',
+  'SEO & Paid Ads',
+  'Email Marketing (Klaviyo)',
+  'Custom / Not Sure Yet',
 ]
 
-const INCLUDED = [
-  'Free 30-min strategy call',
-  'Custom store growth roadmap',
-  'Zero pressure, zero hard-sell',
-  'Actionable advice regardless',
+const budgets = [
+  'Under $300',
+  '$300 – $500',
+  '$500 – $1,000',
+  '$1,000+',
+  'Not sure yet',
 ]
 
-export default function BookCall() {
+const steps = [
+  {
+    icon: RiCalendarLine,
+    title: 'Book Your Call',
+    desc: 'Fill the form and pick a time that works for you.',
+  },
+  {
+    icon: RiMessage2Line,
+    title: 'Discovery Session',
+    desc: 'We talk about your brand, goals, and what you need to grow.',
+  },
+  {
+    icon: RiStore2Line,
+    title: 'Get Your Plan',
+    desc: 'We map out a clear strategy and recommend the best package or custom solution.',
+  },
+  {
+    icon: RiArrowRightUpLine,
+    title: 'We Execute',
+    desc: 'Once you\'re in, we get to work — fast, focused, and results-driven.',
+  },
+]
+
+const perks = [
+  { icon: RiShieldCheckLine, text: '100% free, zero obligation' },
+  { icon: RiTimeLine,        text: '30-minute focused session' },
+  { icon: RiStarFill,        text: 'Tailored advice for your brand' },
+  { icon: SiShopify,         text: 'Shopify & e-commerce experts' },
+]
+
+// ── Variants ──────────────────────────────────────────────────
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.4, 0, 0.2, 1] } },
+}
+
+const stagger = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.1 } },
+}
+
+// ── Form Field ────────────────────────────────────────────────
+function Field({ label, error, children }) {
   return (
-    <section style={{ background: 'var(--bg)', minHeight: '100vh', paddingTop: 100, paddingBottom: 80 }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem' }}>
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[var(--warm)] text-xs font-semibold uppercase tracking-wider">
+        {label}
+      </label>
+      {children}
+      {error && (
+        <p className="text-red-400 text-xs mt-0.5">{error}</p>
+      )}
+    </div>
+  )
+}
 
-        {/* ── Header ─────────────────────────────────── */}
-        <motion.div
-          variants={up(0.05)} initial="hidden" animate="show"
-          style={{ textAlign: 'center', maxWidth: 580, margin: '0 auto 52px' }}
+const inputClass =
+  'bg-[var(--bg-raised)] border border-[var(--bg-border)] focus:border-[var(--brand)]/50 focus:ring-1 focus:ring-[var(--brand)]/20 text-[var(--snow)] placeholder-[var(--snow-muted)] text-sm px-4 py-3 rounded-xl outline-none transition-all duration-200 w-full'
+
+// ── Success Screen ────────────────────────────────────────────
+function SuccessScreen({ name, onReset }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      className="flex flex-col items-center text-center gap-6 py-10"
+    >
+      {/* Animated check */}
+      <div className="relative">
+        <div className="w-20 h-20 rounded-full bg-emerald-400/10 border border-emerald-400/25 flex items-center justify-center text-3xl text-emerald-400">
+          <RiCheckboxCircleFill />
+        </div>
+        <div className="absolute inset-0 rounded-full border border-emerald-400/20 animate-ping" />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h3
+          className="text-[var(--snow)] font-black text-2xl"
+          style={{ fontFamily: "var(--font-display)" }}
         >
-          <span style={{
-            display: 'inline-block',
-            fontFamily: 'var(--font-mono)', fontSize: 9,
-            letterSpacing: '0.22em', textTransform: 'uppercase',
-            padding: '5px 14px', borderRadius: 100,
-            background: 'var(--violet-muted)', border: '1px solid var(--violet-border)',
-            color: 'var(--violet-bright)', marginBottom: 20,
-          }}>
-            Let's Talk
-          </span>
+          You're booked, {name}! 🎉
+        </h3>
+        <p className="text-[var(--snow-muted)] text-sm leading-relaxed max-w-sm mx-auto">
+          We've received your request and will reach out within <strong className="text-[var(--warm)]">24 hours</strong> to confirm your call time. Check your inbox and WhatsApp.
+        </p>
+      </div>
 
-          <h1 style={{
-            fontFamily: 'var(--font-display)', fontWeight: 800,
-            fontSize: 'clamp(2rem, 4vw, 3.2rem)',
-            color: 'var(--snow)', lineHeight: 1.1,
-            letterSpacing: '-0.02em', marginBottom: 16,
-          }}>
-            Book Your Free Strategy Call
-          </h1>
+      <div className="flex flex-col sm:flex-row gap-3 mt-2">
+        <a
+          href="https://www.instagram.com/proven_gain"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 border border-[var(--brand)]/30 hover:border-[var(--brand)]/60 text-[var(--warm)] hover:text-[var(--snow)] font-semibold px-5 py-2.5 rounded-full transition-all duration-300 text-sm"
+        >
+          <RiInstagramLine className="text-[var(--brand)]" />
+          Follow on Instagram
+        </a>
+        <button
+          onClick={onReset}
+          className="flex items-center gap-2 text-[var(--snow-muted)] hover:text-[var(--warm)] font-medium text-sm transition-colors"
+        >
+          Submit another request
+        </button>
+      </div>
+    </motion.div>
+  )
+}
 
-          <p style={{
-            fontFamily: 'var(--font-body)', fontSize: '1rem',
-            color: 'var(--snow-dim)', lineHeight: 1.75,
-          }}>
-            30 minutes. Zero fluff. Walk away with a clear action plan to launch or scale
-            your profitable Shopify store.
-          </p>
-        </motion.div>
+// ── Main Page ─────────────────────────────────────────────────
+export default function BookCall() {
+  const [form, setForm] = useState({
+    name: '', email: '', phone: '', business: '',
+    service: '', budget: '', message: '', preferredTime: '',
+  })
+  const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
-        {/* ── Two-column grid ────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}
-          className="lg:grid-cols-2">
+  const set = (key, val) => {
+    setForm(f => ({ ...f, [key]: val }))
+    if (errors[key]) setErrors(e => ({ ...e, [key]: '' }))
+  }
 
-          {/* ── Left ───────────────────────────────────── */}
-          <motion.div variants={up(0.14)} initial="hidden" animate="show"
-            style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+  const validate = () => {
+    const e = {}
+    if (!form.name.trim())    e.name    = 'Name is required'
+    if (!form.email.trim())   e.email   = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(form.email)) e.email = 'Enter a valid email'
+    if (!form.service)        e.service = 'Please select a service'
+    return e
+  }
 
-            {/* What's included */}
-            <div style={{
-              background: 'var(--bg-card)', borderRadius: 16,
-              border: '1px solid var(--bg-border)', padding: '24px 26px',
-            }}>
-              <h3 style={{
-                fontFamily: 'var(--font-display)', fontWeight: 700,
-                fontSize: '1.05rem', color: 'var(--snow)', marginBottom: 18,
-              }}>
-                What's Included
-              </h3>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
-                {INCLUDED.map(item => (
-                  <li key={item} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{
-                      width: 22, height: 22, borderRadius: 7, flexShrink: 0,
-                      background: 'var(--violet-muted)', border: '1px solid var(--violet-border)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <TbCheck size={12} color="var(--violet-bright)" strokeWidth={2.5} />
-                    </span>
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--snow-dim)' }}>
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const errs = validate()
+    if (Object.keys(errs).length) { setErrors(errs); return }
+    setLoading(true)
 
-            {/* Process steps */}
-            {STEPS.map(({ n, title, desc }, i) => (
-              <motion.div
-                key={n}
-                variants={up(0.20 + i * 0.07)} initial="hidden" animate="show"
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/payments/booking`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Something went wrong')
+      setSubmitted(true)
+    } catch (err) {
+      setErrors({ submit: err.message })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="bg-[var(--bg)] min-h-screen">
+
+      {/* ── Hero ── */}
+      <section className="relative pt-36 pb-16 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[var(--brand)]/05 blur-[120px] rounded-full pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(var(--snow) 1px, transparent 1px), linear-gradient(90deg, var(--snow) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="flex flex-col items-center text-center gap-5 max-w-2xl mx-auto"
+          >
+            <motion.span variants={fadeUp} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--brand)] bg-[var(--brand)]/10 border border-[var(--brand)]/20 px-4 py-2 rounded-full">
+              <RiCalendarLine />
+              Free Discovery Call
+            </motion.span>
+
+            <motion.h1
+              variants={fadeUp}
+              className="text-5xl sm:text-6xl font-black text-[var(--snow)] leading-tight"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Let's Build Your{' '}
+              <span
                 style={{
-                  display: 'flex', alignItems: 'flex-start', gap: 14,
-                  background: 'var(--bg-card)', borderRadius: 14,
-                  border: '1px solid var(--bg-border)', padding: '16px 20px',
-                  transition: 'border-color 0.2s, box-shadow 0.2s',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--violet-border)'
-                  e.currentTarget.style.boxShadow   = '0 0 24px rgba(108,71,255,0.08)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--bg-border)'
-                  e.currentTarget.style.boxShadow   = 'none'
+                  background: 'linear-gradient(120deg, var(--brand-light), var(--warm))',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
                 }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                  background: 'var(--violet-muted)', border: '1px solid var(--violet-border)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 500, color: 'var(--violet-bright)' }}>
-                    {n}
-                  </span>
-                </div>
-                <div>
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.96rem', color: 'var(--snow)', marginBottom: 4 }}>
-                    {title}
-                  </h4>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--snow-muted)', lineHeight: 1.6 }}>
-                    {desc}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                Brand Together
+              </span>
+            </motion.h1>
 
-          {/* ── Right: booking widget ──────────────────── */}
-          <motion.div variants={up(0.22)} initial="hidden" animate="show"
-            style={{
-              background: 'var(--bg-card)', borderRadius: 16,
-              border: '1px solid var(--bg-border)', overflow: 'hidden',
-              display: 'flex', flexDirection: 'column',
-            }}
-          >
-            {/* Card header */}
-            <div style={{
-              padding: '24px 26px 18px',
-              borderBottom: '1px solid var(--bg-border)',
-              background: 'var(--bg-hover)',
-            }}>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--snow)', marginBottom: 4 }}>
-                Pick a Time
-              </h3>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--snow-muted)' }}>
-                Timezone auto-detected · All slots in your local time
-              </p>
-            </div>
+            <motion.p variants={fadeUp} className="text-[var(--snow-muted)] text-base leading-relaxed max-w-lg">
+              Book a free 30-minute call. No pitch, no pressure — just a real conversation about your brand and how we can grow it.
+            </motion.p>
 
-            {/* Calendar embed placeholder */}
-            <div style={{
-              flex: 1, display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              gap: 16, padding: '48px 28px',
-            }}>
-              <div style={{
-                width: 60, height: 60, borderRadius: 18,
-                background: 'var(--violet-muted)', border: '1px solid var(--violet-border)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <TbCalendar size={28} color="var(--violet-bright)" strokeWidth={1.5} />
-              </div>
-
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15, color: 'var(--snow)', marginBottom: 6 }}>
-                  Booking widget goes here
-                </p>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--snow-muted)', marginBottom: 28 }}>
-                  Drop in your Calendly or TidyCal embed
-                </p>
-
-                <Link
-                  to="/book-a-call"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 8,
-                    fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: 14,
-                    padding: '11px 24px', borderRadius: 100,
-                    background: 'var(--brand-grad)', color: '#fff',
-                    boxShadow: '0 6px 22px rgba(108,71,255,0.40)',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(108,71,255,0.52)' }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)';    e.currentTarget.style.boxShadow = '0 6px 22px rgba(108,71,255,0.40)' }}
-                >
-                  Email Us Instead <TbArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
-
-            {/* Bottom trust note */}
-            <div style={{
-              padding: '14px 26px',
-              borderTop: '1px solid var(--bg-border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              background: 'var(--bg-hover)',
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)' }} />
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--snow-muted)' }}>
-                Free call · No credit card · No obligation
-              </p>
-            </div>
+            {/* Perks */}
+            <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4 pt-1">
+              {perks.map(({ icon: Icon, text }) => (
+                <span key={text} className="flex items-center gap-1.5 text-[var(--warm)] text-xs font-medium">
+                  <Icon className="text-[var(--brand)] text-sm" />
+                  {text}
+                </span>
+              ))}
+            </motion.div>
           </motion.div>
         </div>
+      </section>
 
-        {/* ── Alternative contact row ─────────────────── */}
-        <motion.div
-          variants={up(0.55)} initial="hidden" animate="show"
-          style={{
-            marginTop: 28, display: 'flex', flexWrap: 'wrap',
-            gap: 12, justifyContent: 'center',
-          }}
-        >
-          {[
-            { icon: TbPhone, label: 'Prefer to call?', value: 'WhatsApp us', href: '#' },
-            { icon: TbMail,  label: 'Prefer email?',   value: 'hello@ecomevolve.com', href: 'mailto:hello@ecomevolve.com' },
-          ].map(({ icon: Icon, label, value, href }) => (
-            <a
-              key={label} href={href}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 12,
-                padding: '14px 22px', borderRadius: 14,
-                background: 'var(--bg-card)', border: '1px solid var(--bg-border)',
-                transition: 'border-color 0.2s, box-shadow 0.2s',
-                flex: 1, minWidth: 220,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--violet-border)'
-                e.currentTarget.style.boxShadow   = '0 0 24px rgba(108,71,255,0.08)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--bg-border)'
-                e.currentTarget.style.boxShadow   = 'none'
-              }}
+      {/* ── Main content ── */}
+      <section className="pb-28">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="grid lg:grid-cols-[1fr_1.5fr] gap-12 items-start">
+
+            {/* ── Left: Process + contact ── */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              className="lg:sticky lg:top-28 flex flex-col gap-8"
             >
-              <div style={{
-                width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                background: 'var(--violet-muted)', border: '1px solid var(--violet-border)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Icon size={17} color="var(--violet-bright)" strokeWidth={1.8} />
-              </div>
-              <div>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--snow-muted)', marginBottom: 2 }}>{label}</p>
-                <p style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 13, color: 'var(--snow)' }}>{value}</p>
-              </div>
-            </a>
-          ))}
-        </motion.div>
 
-      </div>
-    </section>
+              {/* How it works */}
+              <div className="flex flex-col gap-5">
+                <h3
+                  className="text-[var(--snow)] font-bold text-lg"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  How It Works
+                </h3>
+                <div className="flex flex-col gap-4">
+                  {steps.map(({ icon: Icon, title, desc }, i) => (
+                    <div key={title} className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
+                          style={{ background: 'rgba(232,99,26,0.15)', color: 'var(--brand)' }}
+                        >
+                          <Icon />
+                        </div>
+                        {i < steps.length - 1 && (
+                          <div className="w-px flex-1 bg-gradient-to-b from-[var(--brand)]/30 to-transparent mt-2" />
+                        )}
+                      </div>
+                      <div className="pb-4">
+                        <p className="text-[var(--snow)] font-semibold text-sm mb-0.5" style={{ fontFamily: "var(--font-display)" }}>
+                          {title}
+                        </p>
+                        <p className="text-[var(--snow-muted)] text-xs leading-relaxed">{desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="h-px bg-gradient-to-r from-[var(--brand)]/20 via-[var(--snow)]/05 to-transparent" />
+
+              {/* Social contact */}
+              <div className="flex flex-col gap-4">
+                <h3
+                  className="text-[var(--snow)] font-bold text-sm"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  Or reach out directly
+                </h3>
+                <div className="flex flex-col gap-3">
+                  <a
+                    href="https://wa.me/message/your-whatsapp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-[var(--bg-card)] border border-[var(--bg-border)] hover:border-emerald-400/30 rounded-xl px-4 py-3 transition-all duration-200 group"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-emerald-400/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                      <RiWhatsappLine className="text-lg" />
+                    </div>
+                    <div>
+                      <p className="text-[var(--snow)] font-semibold text-sm">WhatsApp</p>
+                      <p className="text-[var(--snow-muted)] text-xs">Quick replies, usually within 1hr</p>
+                    </div>
+                    <RiArrowRightUpLine className="ml-auto text-[var(--snow-muted)] group-hover:text-[var(--brand)] transition-colors" />
+                  </a>
+
+                  <a
+                    href="https://www.instagram.com/proven_gain"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-[var(--bg-card)] border border-[var(--bg-border)] hover:border-[var(--brand)]/30 rounded-xl px-4 py-3 transition-all duration-200 group"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-[var(--brand)]/10 flex items-center justify-center text-[var(--brand)] group-hover:scale-110 transition-transform">
+                      <RiInstagramLine className="text-lg" />
+                    </div>
+                    <div>
+                      <p className="text-[var(--snow)] font-semibold text-sm">@proven_gain</p>
+                      <p className="text-[var(--snow-muted)] text-xs">DM us on Instagram</p>
+                    </div>
+                    <RiArrowRightUpLine className="ml-auto text-[var(--snow-muted)] group-hover:text-[var(--brand)] transition-colors" />
+                  </a>
+
+                  <a
+                    href="mailto:hello@proven-gain.com"
+                    className="flex items-center gap-3 bg-[var(--bg-card)] border border-[var(--bg-border)] hover:border-[var(--warm)]/30 rounded-xl px-4 py-3 transition-all duration-200 group"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-[var(--warm)]/10 flex items-center justify-center text-[var(--warm)] group-hover:scale-110 transition-transform">
+                      <RiMailLine className="text-lg" />
+                    </div>
+                    <div>
+                      <p className="text-[var(--snow)] font-semibold text-sm">Email Us</p>
+                      <p className="text-[var(--snow-muted)] text-xs">hello@proven-gain.com</p>
+                    </div>
+                    <RiArrowRightUpLine className="ml-auto text-[var(--snow-muted)] group-hover:text-[var(--brand)] transition-colors" />
+                  </a>
+                </div>
+              </div>
+
+            </motion.div>
+
+            {/* ── Right: Form ── */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="relative rounded-3xl border border-[var(--brand)]/15 bg-[var(--bg-card)] overflow-hidden">
+                {/* Top accent */}
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--brand)] to-transparent" />
+
+                <div className="p-8">
+                  <AnimatePresence mode="wait">
+                    {submitted ? (
+                      <SuccessScreen
+                        key="success"
+                        name={form.name.split(' ')[0]}
+                        onReset={() => {
+                          setSubmitted(false)
+                          setForm({ name: '', email: '', phone: '', business: '', service: '', budget: '', message: '', preferredTime: '' })
+                        }}
+                      />
+                    ) : (
+                      <motion.form
+                        key="form"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onSubmit={handleSubmit}
+                        className="flex flex-col gap-5"
+                      >
+                        <div className="mb-1">
+                          <h2 className="text-[var(--snow)] font-black text-xl mb-1" style={{ fontFamily: "var(--font-display)" }}>
+                            Book Your Free Call
+                          </h2>
+                          <p className="text-[var(--snow-muted)] text-xs">Fill this in and we'll confirm your time within 24 hours.</p>
+                        </div>
+
+                        {/* Name + Email */}
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <Field label="Full Name *" error={errors.name}>
+                            <div className="relative">
+                              <RiUserLine className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--snow-muted)] text-sm" />
+                              <input
+                                type="text"
+                                placeholder="John Doe"
+                                value={form.name}
+                                onChange={e => set('name', e.target.value)}
+                                className={`${inputClass} pl-9 ${errors.name ? 'border-red-500/50' : ''}`}
+                              />
+                            </div>
+                          </Field>
+
+                          <Field label="Email Address *" error={errors.email}>
+                            <div className="relative">
+                              <RiMailLine className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--snow-muted)] text-sm" />
+                              <input
+                                type="email"
+                                placeholder="john@example.com"
+                                value={form.email}
+                                onChange={e => set('email', e.target.value)}
+                                className={`${inputClass} pl-9 ${errors.email ? 'border-red-500/50' : ''}`}
+                              />
+                            </div>
+                          </Field>
+                        </div>
+
+                        {/* Phone + Business */}
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <Field label="WhatsApp / Phone">
+                            <div className="relative">
+                              <RiPhoneLine className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--snow-muted)] text-sm" />
+                              <input
+                                type="tel"
+                                placeholder="+1 234 567 8900"
+                                value={form.phone}
+                                onChange={e => set('phone', e.target.value)}
+                                className={`${inputClass} pl-9`}
+                              />
+                            </div>
+                          </Field>
+
+                          <Field label="Business / Brand Name">
+                            <div className="relative">
+                              <RiStore2Line className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--snow-muted)] text-sm" />
+                              <input
+                                type="text"
+                                placeholder="Your Brand Co."
+                                value={form.business}
+                                onChange={e => set('business', e.target.value)}
+                                className={`${inputClass} pl-9`}
+                              />
+                            </div>
+                          </Field>
+                        </div>
+
+                        {/* Service */}
+                        <Field label="Service You're Interested In *" error={errors.service}>
+                          <div className="flex flex-wrap gap-2">
+                            {services.map(s => (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => set('service', s)}
+                                className={`text-xs font-semibold px-3.5 py-2 rounded-full border transition-all duration-200
+                                  ${form.service === s
+                                    ? 'bg-[var(--brand)] border-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/25'
+                                    : 'bg-transparent border-[var(--white-muted)] text-[var(--snow-muted)] hover:border-[var(--brand)]/40 hover:text-[var(--warm)]'
+                                  }`}
+                              >
+                                {s}
+                              </button>
+                            ))}
+                          </div>
+                          {errors.service && <p className="text-red-400 text-xs">{errors.service}</p>}
+                        </Field>
+
+                        {/* Budget */}
+                        <Field label="Approximate Budget">
+                          <div className="flex flex-wrap gap-2">
+                            {budgets.map(b => (
+                              <button
+                                key={b}
+                                type="button"
+                                onClick={() => set('budget', b)}
+                                className={`text-xs font-semibold px-3.5 py-2 rounded-full border transition-all duration-200
+                                  ${form.budget === b
+                                    ? 'bg-[var(--warm)]/15 border-[var(--warm)]/60 text-[var(--warm)]'
+                                    : 'bg-transparent border-[var(--white-muted)] text-[var(--snow-muted)] hover:border-[var(--warm)]/30 hover:text-[var(--warm)]'
+                                  }`}
+                              >
+                                {b}
+                              </button>
+                            ))}
+                          </div>
+                        </Field>
+
+                        {/* Preferred time */}
+                        <Field label="Preferred Call Time">
+                          <input
+                            type="text"
+                            placeholder="e.g. Weekdays after 5pm GMT, or weekends"
+                            value={form.preferredTime}
+                            onChange={e => set('preferredTime', e.target.value)}
+                            className={inputClass}
+                          />
+                        </Field>
+
+                        {/* Message */}
+                        <Field label="Tell Us About Your Brand">
+                          <textarea
+                            rows={4}
+                            placeholder="What are you building? Where are you stuck? What's your goal in the next 90 days?"
+                            value={form.message}
+                            onChange={e => set('message', e.target.value)}
+                            className={`${inputClass} resize-none`}
+                          />
+                        </Field>
+
+                        {/* Submit */}
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="w-full flex items-center justify-center gap-2 bg-[var(--brand)] hover:bg-[var(--brand-light)] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-full transition-all duration-300 shadow-xl shadow-[var(--brand)]/30 hover:-translate-y-0.5 text-sm mt-1"
+                        >
+                          {loading ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Submitting...
+                            </>
+                          ) : (
+                            <>
+                              <RiCalendarLine className="text-base" />
+                              Book My Free Call
+                              <RiArrowRightUpLine />
+                            </>
+                          )}
+                        </button>
+
+                        {/* Footer note */}
+                        <p className="text-[var(--snow-muted)] text-[11px] text-center leading-relaxed">
+                          By submitting, you agree to be contacted via email or WhatsApp to confirm your session. No spam, ever.
+                        </p>
+
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
   )
 }

@@ -5,6 +5,7 @@ import {
   TbCheck, TbX, TbArrowUpRight, TbLock, TbShieldCheck,
   TbClock, TbCalendar, TbStar,
 } from 'react-icons/tb'
+import { API_URL } from '../../lib/api'
 
 /* ── helpers ─────────────────────────────────────────────── */
 const up = (d = 0) => ({
@@ -94,13 +95,15 @@ const packages = [
 ]
 
 /* ══════════════════════════════════════════════════════════
-   CHECKOUT MODAL (frontend only — no payment logic)
+   CHECKOUT MODAL
 ══════════════════════════════════════════════════════════ */
 function CheckoutModal({ pkg, onClose }) {
-  const [form, setForm] = useState({ name: '', email: '', business: '' })
+  const [form,    setForm]    = useState({ name: '', email: '', business: '' })
+  const [loading, setLoading] = useState(false)
+  const [error,   setError]   = useState('')
 
   useEffect(() => {
-    if (pkg) { setForm({ name: '', email: '', business: '' }) }
+    if (pkg) { setForm({ name: '', email: '', business: '' }); setError('') }
   }, [pkg])
 
   useEffect(() => {
@@ -108,9 +111,27 @@ function CheckoutModal({ pkg, onClose }) {
     return () => { document.body.style.overflow = '' }
   }, [pkg])
 
-  const handleSubmit = () => {
-    // TODO: wire up payment / form submission here
-    console.log('Form submitted:', { package: pkg.id, ...form })
+  const handlePay = async () => {
+    if (!form.name.trim() || !form.email.trim()) return
+    setLoading(true); setError('')
+    try {
+      const res  = await fetch(`${API_URL}/api/payments/initiate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          packageId:     pkg.id,
+          customerName:  form.name,
+          customerEmail: form.email,
+          businessName:  form.business,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Payment initiation failed')
+      window.location.href = data.paymentLink
+    } catch (err) {
+      setError(err.message)
+      setLoading(false)
+    }
   }
 
   if (!pkg) return null
@@ -178,13 +199,15 @@ function CheckoutModal({ pkg, onClose }) {
                     </h3>
                   </div>
                 </div>
-                <button onClick={onClose} style={{
-                  width: 30, height: 30, borderRadius: 8,
-                  background: 'var(--bg-card)', border: '1px solid var(--bg-border)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', color: 'var(--snow-muted)',
-                  transition: 'color 0.2s',
-                }}
+                <button
+                  onClick={onClose}
+                  style={{
+                    width: 30, height: 30, borderRadius: 8,
+                    background: 'var(--bg-card)', border: '1px solid var(--bg-border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', color: 'var(--snow-muted)',
+                    transition: 'color 0.2s',
+                  }}
                   onMouseEnter={e => e.currentTarget.style.color = 'var(--snow)'}
                   onMouseLeave={e => e.currentTarget.style.color = 'var(--snow-muted)'}
                 >
@@ -257,6 +280,18 @@ function CheckoutModal({ pkg, onClose }) {
                   </div>
                 ))}
 
+                {/* Error */}
+                {error && (
+                  <div style={{
+                    display: 'flex', alignItems: 'flex-start', gap: 8,
+                    background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.20)',
+                    borderRadius: 10, padding: '10px 12px',
+                  }}>
+                    <TbX size={14} color="#EF4444" style={{ flexShrink: 0, marginTop: 1 }} />
+                    <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: '#EF4444' }}>{error}</p>
+                  </div>
+                )}
+
                 {/* Security note */}
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
@@ -265,32 +300,49 @@ function CheckoutModal({ pkg, onClose }) {
                 }}>
                   <TbShieldCheck size={16} color="#10b981" style={{ flexShrink: 0 }} />
                   <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--snow-muted)' }}>
-                    Secure payment · Visa, Mastercard & more accepted
+                    Secure payment via Flutterwave · Visa, Mastercard & more accepted
                   </p>
                 </div>
 
-                {/* Submit button */}
+                {/* Pay button */}
                 <button
-                  onClick={handleSubmit}
-                  disabled={!form.name.trim() || !form.email.trim()}
+                  onClick={handlePay}
+                  disabled={loading || !form.name.trim() || !form.email.trim()}
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: 14,
                     padding: '13px 20px', borderRadius: 100,
-                    background: !form.name.trim() || !form.email.trim()
+                    background: loading || !form.name.trim() || !form.email.trim()
                       ? 'var(--bg-hover)'
                       : 'var(--brand-grad)',
-                    color: !form.name.trim() || !form.email.trim() ? 'var(--snow-muted)' : '#fff',
+                    color: loading || !form.name.trim() || !form.email.trim() ? 'var(--snow-muted)' : '#fff',
                     border: 'none',
-                    cursor: !form.name.trim() || !form.email.trim() ? 'not-allowed' : 'pointer',
-                    boxShadow: !form.name.trim() || !form.email.trim() ? 'none' : '0 6px 24px rgba(213,81,36,0.40)',
+                    cursor: loading || !form.name.trim() || !form.email.trim() ? 'not-allowed' : 'pointer',
+                    boxShadow: loading || !form.name.trim() || !form.email.trim() ? 'none' : '0 6px 24px rgba(213,81,36,0.40)',
                     transition: 'all 0.2s',
                   }}
                 >
-                  <TbLock size={14} />
-                  Pay {pkg.priceLabel} Securely
-                  <TbArrowUpRight size={14} />
+                  {loading ? (
+                    <>
+                      <div style={{
+                        width: 14, height: 14,
+                        border: '2px solid rgba(255,255,255,0.25)',
+                        borderTopColor: '#fff',
+                        borderRadius: '50%',
+                        animation: 'spin 0.7s linear infinite',
+                      }} />
+                      Redirecting to checkout...
+                    </>
+                  ) : (
+                    <>
+                      <TbLock size={14} />
+                      Pay {pkg.priceLabel} Securely
+                      <TbArrowUpRight size={14} />
+                    </>
+                  )}
                 </button>
+                <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+
               </div>
             </div>
           </motion.div>
@@ -567,7 +619,7 @@ export default function Packages() {
           }}
         >
           {[
-            { icon: TbLock,        text: 'Secure payments' },
+            { icon: TbLock,        text: 'Secure Flutterwave payments' },
             { icon: TbShieldCheck, text: '3 rounds of revisions' },
             { icon: TbClock,       text: 'Fast turnaround guaranteed' },
             { icon: TbCalendar,    text: 'Free discovery call included' },
