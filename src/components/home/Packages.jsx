@@ -5,7 +5,7 @@ import {
   TbCheck, TbX, TbArrowUpRight, TbLock, TbShieldCheck,
   TbClock, TbCalendar, TbStar,
 } from 'react-icons/tb'
-import { API_URL } from '../../lib/api'
+import { API_URL } from '../lib/api'
 
 /* ── helpers ─────────────────────────────────────────────── */
 const up = (d = 0) => ({
