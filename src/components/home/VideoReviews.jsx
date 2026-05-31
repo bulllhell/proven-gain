@@ -62,7 +62,7 @@ const reels = [
   },
 ]
 
-const IG_PROFILE = 'https://www.instagram.com/ecomevolve'
+const IG_PROFILE = 'https://www.instagram.com/provengain_strategies?igsh=MTdxdWwwZXdqcWJ0ag=='
 
 // ── Modal ─────────────────────────────────────────────────────
 function ReelModal({ reel, onClose }) {
@@ -246,7 +246,7 @@ function ReelCard({ reel, index, onClick }) {
         <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 text-white font-bold px-1.5 sm:px-2 py-0.5 rounded-full"
           style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)', fontSize: '9px' }}>
           <RiInstagramLine style={{ color: '#d55124', fontSize: '10px' }} />
-          <span className="hidden sm:inline">@ecomevolve</span>
+          <span className="hidden sm:inline">@provengain_strategies</span>
           <span className="sm:hidden">IG</span>
         </div>
       </div>
@@ -310,7 +310,7 @@ export default function VideoReviews() {
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--brand-border)'; e.currentTarget.style.color = 'var(--snow-dim)' }}
             >
               <RiInstagramLine style={{ color: 'var(--brand)' }} />
-              <span className="hidden sm:inline">Follow</span> @ecomevolve
+              <span className="hidden sm:inline">Follow</span> @provengain
               <RiExternalLinkLine className="text-[10px]" />
             </a>
           </div>
