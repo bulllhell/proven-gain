@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { FaInstagram, FaTiktok, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa'
+import { FaInstagram, FaTiktok, FaXTwitter, FaWhatsapp } from 'react-icons/fa6'
 import { TbArrowRight } from 'react-icons/tb'
 import provLogo from '../../assets/provL.jpeg'
 
@@ -19,10 +19,10 @@ const COLS = {
 }
 
 const SOCIALS = [
-  { icon: FaInstagram,  href: 'https://www.instagram.com/ecom_evolve?igsh=a2pqenJpMHY1Z2Vx&utm_source=qr', label: 'Instagram' },
-  { icon: FaTiktok,     href: 'https://www.tiktok.com/@akandeayomide05?_r=1&_t=ZT-965N9mLLRLZ',            label: 'TikTok' },
-  { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/ecom-evolve-10aa3a377',                          label: 'LinkedIn' },
-  { icon: FaWhatsapp,   href: 'https://wa.me/23408154084093',                                               label: 'WhatsApp' },
+  { icon: FaInstagram,  href: 'https://www.instagram.com/provengain_strategies?igsh=MWtidnhpNDE1bTQwZQ%3D%3D&utm_source=qr', label: 'Instagram' },
+  { icon: FaTiktok,     href: 'https://www.tiktok.com/@proven.gain.agency?_r=1&_t=ZS-96DP8zMoqRA',                            label: 'TikTok' },
+  { icon: FaXTwitter,   href: 'https://x.com/provengain?s=21',                                                               label: 'X' },
+  { icon: FaWhatsapp,   href: 'https://wa.me/2349128305158',                                                                 label: 'WhatsApp' },
 ]
 
 export default function Footer() {

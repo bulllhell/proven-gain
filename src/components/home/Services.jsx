@@ -154,16 +154,36 @@ export default function AboutUs() {
             </motion.div>
           </div>
 
-          {/* ── Right: photo ── */}
+          {/* ── Right: CEO photo ── */}
           <motion.div
             variants={up(0.18)} initial="hidden" whileInView="show" viewport={{ once: true }}
             style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', height: 460 }}
           >
             <img
-              src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80&auto=format&fit=crop"
-              alt="Our team collaborating"
+              src="https://res.cloudinary.com/dm2zp4jb1/image/upload/q_auto/f_auto/v1780673237/WhatsApp_Image_2026-06-05_at_16.21.37_y4apvi.jpg"
+              alt="Ganiyu Taiwo, Founder & CEO"
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'brightness(0.85) saturate(0.9)' }}
             />
+
+            {/* CEO name badge */}
+            <div style={{
+              position: 'absolute', top: 22, left: 22,
+              background: 'rgba(12,11,10,0.82)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 12,
+              padding: '10px 16px',
+              backdropFilter: 'blur(10px)',
+            }}>
+              <p style={{
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                fontSize: 14, color: 'var(--snow)', marginBottom: 2,
+              }}>
+                Ganiyu Taiwo
+              </p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--snow-muted)' }}>
+                Founder &amp; CEO
+              </p>
+            </div>
 
             {/* Stat badge */}
             <div style={{
