@@ -379,7 +379,7 @@ export default function Portfolio() {
 
         {/* ── Instagram CTA ── */}
         <motion.a
-          href="https://www.instagram.com/ecom_evolve"
+          href="https://www.instagram.com/provengain_strategies?igsh=MTdxdWwwZXdqcWJ0ag=="
           target="_blank"
           rel="noopener noreferrer"
           variants={up(0.55)}
@@ -398,7 +398,7 @@ export default function Portfolio() {
         >
           <div style={{ flex: 1, minWidth: 240 }}>
             <p style={S.igEyebrow}>More Proof & Results</p>
-            <h3 style={S.igH3}>Check @ecom_evolve on Instagram</h3>
+            <h3 style={S.igH3}>Check @provengain_strategies on Instagram</h3>
             <p style={S.igP}>
               Real revenue screenshots, store breakdowns, case studies, and
               client wins — updated regularly. See the results for yourself.
